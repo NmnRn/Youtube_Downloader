@@ -65,14 +65,20 @@ def set_busy(busy: bool):
 
 
 def pick_streams_max_1080(yt: YouTube):
-    video = (
-        yt.streams
-        .filter(only_video=True)
-        .filter(resolution=lambda r: r and int(r.replace("p", "")) <= 1080)
-        .order_by("resolution")
-        .desc()
-        .first()
-    )
+    
+    candidates = []
+    for s in yt.streams.filter(only_video=True):
+        if not s.resolution:
+            continue
+        try:
+            res = int(s.resolution.replace("p", ""))
+        except ValueError:
+            continue
+        if res <= 1080:
+            candidates.append((res, s))
+
+    video = max(candidates, key=lambda x: x[0])[1] if candidates else None
+
 
     audio = (
         yt.streams
@@ -81,7 +87,6 @@ def pick_streams_max_1080(yt: YouTube):
         .desc()
         .first()
     )
-
     if not audio:
         audio = (
             yt.streams
@@ -92,6 +97,7 @@ def pick_streams_max_1080(yt: YouTube):
         )
 
     return video, audio
+
 
 
 def show_info():
