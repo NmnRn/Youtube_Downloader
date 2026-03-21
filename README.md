@@ -32,6 +32,8 @@ Add the bin directory to system PATH.
 Verify installation using:
 ffmpeg -version
 
+If FFmpeg is not on PATH, you can set the full path in app.py by editing FFMPEG_PATH.
+
 USAGE
 Run the application using:
 python main.py
